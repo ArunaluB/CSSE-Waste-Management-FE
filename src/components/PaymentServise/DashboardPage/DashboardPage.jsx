@@ -3,9 +3,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import {
-  Trash2, User, Calendar, Truck, Archive, CreditCard, BarChart2, Settings,
-  Sun, Moon, Plus, Award, TrendingUp, Info, X, CheckCircle, Check,
-  DollarSign, Recycle, Leaf, Eye, Clock, FileText, ArrowRight, ArrowLeft
+  Trash2, User, Archive, CreditCard, Award, CheckCircle, Eye,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PaymentModal from '../Modal/PaymentModal';
@@ -13,6 +11,9 @@ import PaymentHistoryModal from '../Modal/PaymentHistoryModal';
 import BinRegistrationModal from '../Modal/BinRegistrationModal';
 import CompletionMessage from '../Modal/CompletionMessage';
 import BinDetailsModal from '../Modal/BinDetailsModal';
+import WasteAnalysisReportModal from '../Modal/WasteAnalysisReportModal';
+
+
 const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, isDarkMode }) => (
   <motion.div
     className={`relative p-6 rounded-3xl overflow-hidden group transition-all duration-500
@@ -53,6 +54,7 @@ const DashboardPage = ({ isDarkMode }) => {
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
   const [hasBin, setHasBin] = useState(false);
   const [showBinDetails, setShowBinDetails] = useState(false);
+  const [showWasteAnalysisReportModal, setShowWasteAnalysisReportModal] = useState(false);
 
 
   return (
@@ -87,16 +89,13 @@ const DashboardPage = ({ isDarkMode }) => {
             ><Eye
                 className="h-6 w-6 text-emerald-700"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent parent onClick event
-                  setShowBinDetails(true); // Open modal
+                  e.stopPropagation();
+                  setShowBinDetails(true);
                 }}
               />
             </motion.div>
           </StatCard>
           <StatCard title="Active Status" value="Active" icon={User} trend={0.8} isDarkMode={isDarkMode} />
-          {/* <StatCard title="Monthly Payment" value="$4,000" icon={CreditCard} trend={7.2} isDarkMode={isDarkMode}>
-            <Eye className="h-6 w-6 absolute bottom-2 right-2 text-emerald-700" />
-          </StatCard> */}
           <StatCard
             title="Monthly Payment"
             value="$4,000"
@@ -114,8 +113,8 @@ const DashboardPage = ({ isDarkMode }) => {
               <Eye
                 className="h-6 w-6 text-emerald-700"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent parent onClick event
-                  setShowPaymentHistoryModal(true); // Open modal
+                  e.stopPropagation();
+                  setShowPaymentHistoryModal(true);
                 }}
               />
             </motion.div>
@@ -127,9 +126,17 @@ const DashboardPage = ({ isDarkMode }) => {
             <h2 className={`text-2xl font-semibold ${isDarkMode ? 'text-emerald-300' : 'text-emerald-700'}`}>
               Recent Recycling Activity
             </h2>
-            <button className={`px-4 py-2 rounded-full text-sm ${isDarkMode ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
-              View All
-            </button>
+            <div className="flex space-x-4">
+              <button className={`px-4 py-2 rounded-full text-sm ${isDarkMode ? 'bg-emerald-700 text-white' : 'bg-emerald-100 text-emerald-800'}`}>
+                View All
+              </button>
+              <button
+                className={`px-4 py-2 rounded-full text-sm ${isDarkMode ? 'bg-red-600 text-white' : 'bg-red-100 text-red-800'}`}
+                onClick={() => setShowWasteAnalysisReportModal(true)}
+              >
+                Report
+              </button>
+            </div>
           </div>
           <ul className="space-y-4">
             {[1, 2, 3].map(i => (
@@ -157,6 +164,13 @@ const DashboardPage = ({ isDarkMode }) => {
       )}
       {showCompletionMessage && <CompletionMessage showCompletionMessage={showCompletionMessage} setShowCompletionMessage={setShowCompletionMessage} />}
       {showBinDetails && <BinDetailsModal showBinDetails={showBinDetails} setShowBinDetails={setShowBinDetails} />}
+      {showWasteAnalysisReportModal && (
+        <WasteAnalysisReportModal
+          showWasteAnalysisReport={showWasteAnalysisReportModal}
+          setShowWasteAnalysisReport={setShowWasteAnalysisReportModal}
+        />
+      )}
+
     </div>
   );
 };

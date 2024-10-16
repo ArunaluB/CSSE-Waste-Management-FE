@@ -43,7 +43,7 @@ const WasteAnalysisReportModal = ({ showWasteAnalysisReport, setShowWasteAnalysi
                 <X className="h-6 w-6" />
               </motion.button>
             </div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -64,7 +64,7 @@ const WasteAnalysisReportModal = ({ showWasteAnalysisReport, setShowWasteAnalysi
               </ResponsiveContainer>
             </motion.div>
 
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
@@ -77,7 +77,7 @@ const WasteAnalysisReportModal = ({ showWasteAnalysisReport, setShowWasteAnalysi
                 <li>Organic waste collection started in 2008 and has shown consistent growth.</li>
                 <li>The overall trend shows a shift from general waste to more recyclable and organic waste collection.</li>
               </ul>
-            </motion.div>
+            </motion.div> */}
           </motion.div>
         </motion.div>
       )}
