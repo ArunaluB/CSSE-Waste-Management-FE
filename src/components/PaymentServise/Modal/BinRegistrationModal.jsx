@@ -4,17 +4,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
-const BinRegistrationModal = ({ 
-    showBinRegistrationModal, 
-    setShowBinRegistrationModal, 
-    setShowCompletionMessage, 
-    setHasBin 
-}) => {
+const BinRegistrationModal = ({ setShowBinRegistrationModal, setShowCompletionMessage, setHasBin, showBinRegistrationModal }) => {
   const [formData, setFormData] = useState({
     name: '',
     address: '',
     binType: 'general',
-    capacity: '340L'
   });
 
   const handleInputChange = (e) => {
@@ -56,30 +50,6 @@ const BinRegistrationModal = ({
               </motion.button>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Address</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
-                  required
-                />
-              </div>
               <div>
                 <label htmlFor="binType" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bin Type</label>
                 <select
