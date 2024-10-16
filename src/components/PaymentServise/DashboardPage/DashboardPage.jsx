@@ -1,6 +1,5 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import {
@@ -10,6 +9,10 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import PaymentModal from '../Modal/PaymentModal';
+import PaymentHistoryModal from '../Modal/PaymentHistoryModal';
+import BinRegistrationModal from '../Modal/BinRegistrationModal';
+import CompletionMessage from '../Modal/CompletionMessage';
+import BinDetailsModal from '../Modal/BinDetailsModal';
 const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, isDarkMode }) => (
   <motion.div
     className={`relative p-6 rounded-3xl overflow-hidden group transition-all duration-500
@@ -45,6 +48,13 @@ const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, 
 
 const DashboardPage = ({ isDarkMode }) => {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [showPaymentHistoryModal, setShowPaymentHistoryModal] = useState(false);
+  const [showBinRegistrationModal, setShowBinRegistrationModal] = useState(false);
+  const [showCompletionMessage, setShowCompletionMessage] = useState(false);
+  const [hasBin, setHasBin] = useState(false);
+  const [showBinDetails, setShowBinDetails] = useState(false);
+
+
   return (
     <div className="pt-28 pb-20 px-20">
       <div className="max-w-7xl mx-auto">
@@ -60,31 +70,56 @@ const DashboardPage = ({ isDarkMode }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <StatCard title="Next Payment Date" value="2024-05-25" icon={Trash2} trend={5.3} isDarkMode={isDarkMode} />
-          <StatCard title="Recycling Bins" icon={Archive} isDarkMode={isDarkMode}>
-            <Eye className="h-6 w-6 absolute bottom-2 right-2 text-emerald-700" />
+          <StatCard
+            title="Recycling Bins"
+            value={hasBin ? "1" : "0"}
+            icon={Archive}
+            trend={hasBin ? 100 : 0}
+            onClick={() => setShowBinRegistrationModal(true)}
+            hasBin={hasBin}
+          >
+            {/* Eye icon positioned at the bottom left */}
+            <motion.div
+              className="absolute bottom-2 right-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            ><Eye
+                className="h-6 w-6 text-emerald-700"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent parent onClick event
+                  setShowBinDetails(true); // Open modal
+                }}
+              />
+            </motion.div>
           </StatCard>
           <StatCard title="Active Status" value="Active" icon={User} trend={0.8} isDarkMode={isDarkMode} />
           {/* <StatCard title="Monthly Payment" value="$4,000" icon={CreditCard} trend={7.2} isDarkMode={isDarkMode}>
             <Eye className="h-6 w-6 absolute bottom-2 right-2 text-emerald-700" />
           </StatCard> */}
-           <StatCard
-              title="Monthly Payment"
-              value="$4,000"
-              icon={CreditCard}
-              trend={7.2}
-              onClick={() => setShowPaymentModal(true)}
+          <StatCard
+            title="Monthly Payment"
+            value="$4,000"
+            icon={CreditCard}
+            trend={7.2}
+            onClick={() => setShowPaymentModal(true)}
+            isDarkMode={isDarkMode}
+          >
+            <motion.div
+              className="absolute bottom-2 right-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
             >
-              {/* Eye icon positioned at the bottom left */}
-              <motion.div
-                className="absolute bottom-2 right-2"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Eye className="h-6 w-6 text-emerald-700" />
-              </motion.div>
-            </StatCard>
-
+              <Eye
+                className="h-6 w-6 text-emerald-700"
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent parent onClick event
+                  setShowPaymentHistoryModal(true); // Open modal
+                }}
+              />
+            </motion.div>
+          </StatCard>
         </div>
 
         <div className={`p-6 rounded-3xl ${isDarkMode ? 'bg-gray-800' : 'bg-white'} shadow-lg mb-12`}>
@@ -109,8 +144,19 @@ const DashboardPage = ({ isDarkMode }) => {
           </ul>
         </div>
       </div>
-        {/* Payment Modal */}
-        {showPaymentModal && <PaymentModal showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} />}
+      {/* Payment Modal */}
+      {showPaymentModal && <PaymentModal showPaymentModal={showPaymentModal} setShowPaymentModal={setShowPaymentModal} />}
+      {showPaymentHistoryModal && <PaymentHistoryModal showPaymentHistory={showPaymentHistoryModal} setShowPaymentHistory={setShowPaymentHistoryModal} />}
+      {showBinRegistrationModal && (
+        <BinRegistrationModal
+          setShowBinRegistrationModal={setShowBinRegistrationModal}
+          setShowCompletionMessage={setShowCompletionMessage}
+          setHasBin={setHasBin}
+          showBinRegistrationModal={showBinRegistrationModal}
+        />
+      )}
+      {showCompletionMessage && <CompletionMessage showCompletionMessage={showCompletionMessage} setShowCompletionMessage={setShowCompletionMessage} />}
+      {showBinDetails && <BinDetailsModal showBinDetails={showBinDetails} setShowBinDetails={setShowBinDetails} />}
     </div>
   );
 };

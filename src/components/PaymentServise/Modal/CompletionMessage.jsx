@@ -1,11 +1,8 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/jsx-no-undef */
-import { useState } from 'react';
+/* eslint-disable react/prop-types */
 import { motion, AnimatePresence } from 'framer-motion';
+import { CheckCircle } from 'lucide-react';
 
-
-
-const CompletionMessage = (showCompletionMessage, setShowCompletionMessage) => (
+const CompletionMessage = ({ showCompletionMessage, setShowCompletionMessage }) => (
     <AnimatePresence>
         {showCompletionMessage && (
             <motion.div
@@ -46,5 +43,4 @@ const CompletionMessage = (showCompletionMessage, setShowCompletionMessage) => (
     </AnimatePresence>
 );
 
-
-export default CompletionMessage
+export default CompletionMessage;

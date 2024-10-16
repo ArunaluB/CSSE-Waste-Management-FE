@@ -1,5 +1,6 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
+
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileText } from 'lucide-react';
@@ -39,7 +40,7 @@ const PaymentHistoryModal = ({ showPaymentHistory, setShowPaymentHistory }) => {
                         <div className="flex justify-between items-center mb-6">
                             <h3 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Payment History</h3>
                             <motion.button
-                                onClick={() => setShowPaymentHistory(false)}
+                                onClick={() => setShowPaymentHistory(false)} // Close modal
                                 className="text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100"
                                 whileHover={{ rotate: 90 }}
                                 whileTap={{ scale: 0.9 }}
@@ -98,4 +99,5 @@ const PaymentHistoryModal = ({ showPaymentHistory, setShowPaymentHistory }) => {
     );
 };
 
-export default PaymentHistoryModal;
+
+export default PaymentHistoryModal
