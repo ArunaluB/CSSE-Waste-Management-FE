@@ -9,7 +9,10 @@ import Schedule from './components/Shedule/Shedule';
 import AddSchedule from './components/Shedule/AddShedule';
 import ViewFullBins from './components/Shedule/ViewFullBins';
 import AvailableDrivers from './components/Shedule/AvailableDrivers';
-import UpdateSchedule from './components/Shedule/UpdateSchedule'; // Import the UpdateSchedule component
+import UpdateSchedule from './components/Shedule/UpdateSchedule';
+import DriverList from './components/Driver/DriverList';
+import ScheduleDetails from './components/Driver/ScheduleDetails';
+import WasteDetails from './components/Driver/WasteDetails'; // Import the UpdateSchedule component
 
 import backgroundImage from './assets/backB.png';
 
@@ -39,6 +42,18 @@ function App() {
     {
       path: "/availableDrivers", // Path for available drivers
       element: <AvailableDrivers />,
+    },
+    {
+      path: "/driverList",
+      element: <DriverList />,
+    },
+    {
+      path: "/scheduleDetails",
+      element: <ScheduleDetails />,
+    },
+    {
+      path: "/wasteDetails", 
+      element: <WasteDetails />,
     },
     {
       path: "/updateSchedule/:scheduleId", // Path for updating a schedule, with a parameter

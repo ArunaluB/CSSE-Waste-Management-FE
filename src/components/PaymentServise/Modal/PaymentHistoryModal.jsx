@@ -1,25 +1,43 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, FileText } from 'lucide-react';
 import { LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ResponsiveContainer } from 'recharts';
 
-const PaymentHistoryModal = ({ showPaymentHistory, setShowPaymentHistory }) => {
-    const paymentHistory = [
-        { id: 1, date: '2023-10-01', amount: 4000, status: 'Paid' },
-        { id: 2, date: '2023-09-01', amount: 3800, status: 'Paid' },
-        { id: 3, date: '2023-08-01', amount: 4200, status: 'Paid' },
-        { id: 4, date: '2023-07-01', amount: 3900, status: 'Paid' },
-        { id: 5, date: '2023-06-01', amount: 4100, status: 'Paid' },
-        { id: 6, date: '2023-05-01', amount: 3950, status: 'Paid' },
-    ];
+const PaymentHistoryModal = ({ showPaymentHistory, setShowPaymentHistory, userId }) => {
+    const [paymentHistory, setPaymentHistory] = useState([]);
+    const [chartData, setChartData] = useState([]);
 
-    const chartData = paymentHistory.map(payment => ({
-        date: payment.date,
-        amount: payment.amount
-    })).reverse();
+    useEffect(() => {
+        if (showPaymentHistory) {
+            // Fetch payment history data using the Fetch API
+            fetch(`http://localhost:8080/api/waste/Payment/getdetails?userid=USER2`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const formattedData = data.map(payment => ({
+                        id: payment.paymentId,
+                        date: new Date(payment.paymentDate).toISOString().split('T')[0], // Format the date
+                        amount: payment.paymentAmount,
+                        status: 'Paid' // Assuming status is 'Paid'
+                    }));
+                    setPaymentHistory(formattedData);
+                    setChartData(formattedData.map(payment => ({
+                        date: payment.date,
+                        amount: payment.amount
+                    })).reverse());
+                })
+                .catch(error => {
+                    console.error('Error fetching payment history:', error);
+                });
+        }
+    }, [showPaymentHistory, userId]);
 
     return (
         <AnimatePresence>
@@ -99,5 +117,4 @@ const PaymentHistoryModal = ({ showPaymentHistory, setShowPaymentHistory }) => {
     );
 };
 
-
-export default PaymentHistoryModal
+export default PaymentHistoryModal;

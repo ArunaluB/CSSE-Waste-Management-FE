@@ -1,31 +1,193 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Truck } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const BinDetailsModal = ({ showBinDetails, setShowBinDetails }) => {
-  const binDetails = {
-    id: 'BIN001',
-    type: 'General Waste',
-    location: '123 Green Street',
-    capacity: '240L',
-    lastEmptied: '2023-10-10',
-    fillLevel: 15,
-    monthlyData: [
-      { month: 'May', waste: 180 },
-      { month: 'Jun', waste: 200 },
-      { month: 'Jul', waste: 220 },
-      { month: 'Aug', waste: 190 },
-      { month: 'Sep', waste: 210 },
-      { month: 'Oct', waste: 230 },
-    ]
+const BinDetailsModal = ({ showBinDetails, setShowBinDetails}) => {
+  const { userId } = useParams();
+  const [binDetails, setBinDetails] = useState(null);
+  const [monthlyData, setMonthlyData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [binList, setBinList] = useState([]);
+  const [currentBinIndex, setCurrentBinIndex] = useState(0);
+  const [showAlert, setShowAlert] = useState(false);
+
+  // Fetch bin details and monthly data
+  useEffect(() => {
+    if (showBinDetails) {
+      console.log("Modal is opening and API calls should be initiated");
+      console.log("userId modal:", userId);
+      setLoading(true);
+
+      fetch(`http://localhost:8080/api/waste/Bin/getbindetails?userid=${userId}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log("Received bin details response:", data);
+          setBinList(data); // Store all bin data
+
+          if (data.length > 0) {
+            setCurrentBinIndex(0); // Initialize the index to 0
+            updateBinDetails(data[0]); // Set the first bin's details
+          } else {
+            throw new Error('No bin data found');
+          }
+        })
+        .catch(error => {
+          console.error("Error during API calls:", error);
+          setLoading(false);
+        });
+    }
+  }, [showBinDetails]);
+
+  // const updateBinDetails = (bin) => {
+  //   // Set bin details
+  //   setBinDetails({
+  //     id: bin.binid,
+  //     type: bin.binType,
+  //     location: bin.location,
+  //     capacity: bin.capacity,
+  //     lastEmptied: '2023-10-10', // Adjust based on real data
+  //     fillLevel: 15 // Placeholder, can be dynamic
+  //   });
+
+  //   // Fetch monthly data for the selected bin
+  //   fetch(`http://localhost:8080/api/waste/Bin/${bin.binid}/collections/monthly`)
+  //     .then(response => {
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       console.log("Parsed monthly data:", data);
+  //       const formattedData = [{ month: 'September', waste: data.September }];
+  //       setMonthlyData(formattedData);
+  //       setLoading(false);
+  //     })
+  //     .catch(error => {
+  //       console.error("Error during API call:", error);
+  //       setLoading(false);
+  //     });
+  // };
+  const updateBinDetails = (bin) => {
+    // Set bin details except for the fillLevel initially
+    setBinDetails({
+      id: bin.binid,
+      type: bin.binType,
+      location: bin.location,
+      capacity: bin.capacity,
+      lastEmptied: '2023-10-10', // Adjust based on real data
+      fillLevel: 0 // Placeholder until data is fetched
+    });
+
+    // Fetch monthly data for the selected bin
+    fetch(`http://localhost:8080/api/waste/Bin/${bin.binid}/collections/monthly`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Parsed monthly data:", data);
+        const formattedData = [{ month: 'September', waste: data.September }];
+        setMonthlyData(formattedData);
+      })
+      .catch(error => {
+        console.error("Error during monthly data API call:", error);
+      });
+
+    // Fetch fill level data
+    fetch(`http://localhost:8080/api/waste/Bin/${bin.binid}/collections/monthly-total`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log("Received fill level data:", data);
+        const fillLevel = data.Total; // Assuming 'total' contains the fill level
+        setBinDetails(prevDetails => ({
+          ...prevDetails,
+          fillLevel // Update the fill level dynamically
+        }));
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error during fill level API call:", error);
+        setLoading(false);
+      });
   };
+
+  const handleSchedulePickup = () => {
+    // Ensure you have the current bin's ID
+    const binId = binDetails.id;
+    const newStatus = "Scheduled";
+
+    // Make the PUT request to update the bin's status
+    fetch(`http://localhost:8080/api/waste/Bin/${binId}/status?newStatus=${newStatus}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.text();
+      })
+      .then(data => {
+        console.log(`Bin ${binId} status updated successfully: ${data}`);
+        alert(`Pickup for bin ${binId} has been scheduled.`);
+      })
+      .catch(error => {
+        console.error('Error scheduling bin pickup:', error);
+        alert('Failed to schedule pickup. Please try again later.');
+      });
+  };
+
+
+
+  const handleNextBin = () => {
+    const nextIndex = (currentBinIndex + 1) % binList.length;
+    setCurrentBinIndex(nextIndex);
+    updateBinDetails(binList[nextIndex]);
+  };
+
+  const handlePrevBin = () => {
+    const prevIndex = (currentBinIndex - 1 + binList.length) % binList.length;
+    setCurrentBinIndex(prevIndex);
+    updateBinDetails(binList[prevIndex]);
+  };
+
+  if (loading) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="text-white">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <AnimatePresence>
-      {showBinDetails && (
+      {showBinDetails && binDetails && (
         <motion.div
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           initial={{ opacity: 0 }}
@@ -37,7 +199,7 @@ const BinDetailsModal = ({ showBinDetails, setShowBinDetails }) => {
             initial={{ scale: 0.9, y: 20 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.9, y: 20 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
           >
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">Bin Details</h3>
@@ -86,7 +248,7 @@ const BinDetailsModal = ({ showBinDetails, setShowBinDetails }) => {
                       className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-emerald-500"
                       initial={{ width: 0 }}
                       animate={{ width: `${binDetails.fillLevel}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
+                      transition={{ duration: 1, ease: 'easeOut' }}
                     />
                   </div>
                 </div>
@@ -101,7 +263,7 @@ const BinDetailsModal = ({ showBinDetails, setShowBinDetails }) => {
             >
               <h4 className="text-lg font-semibold mb-2">Monthly Waste Collection</h4>
               <ResponsiveContainer width="100%" height={200}>
-                <BarChart data={binDetails.monthlyData}>
+                <BarChart data={monthlyData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -110,26 +272,44 @@ const BinDetailsModal = ({ showBinDetails, setShowBinDetails }) => {
                 </BarChart>
               </ResponsiveContainer>
             </motion.div>
-
             <motion.div
-              className="mt-6 flex justify-center"
+              className="mt-6 flex justify-center space-x-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
               <motion.button
                 className="bg-emerald-500 text-white px-4 py-2 rounded-full flex items-center"
+                onClick={handlePrevBin}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Previous Bin
+              </motion.button>
+              <motion.button
+                className="bg-emerald-500 text-white px-4 py-2 rounded-full flex items-center"
+                onClick={handleSchedulePickup}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 <Truck className="h-5 w-5 mr-2" />
                 Schedule Pickup
               </motion.button>
+              <motion.button
+                className="bg-emerald-500 text-white px-4 py-2 rounded-full flex items-center"
+                onClick={handleNextBin}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Next Bin
+              </motion.button>
             </motion.div>
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
+
+
   );
 };
 
