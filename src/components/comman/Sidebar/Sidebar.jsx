@@ -16,7 +16,7 @@ const Sidebar = () => {
                 { icon: CreditCard, label: 'Payments' },
                 { icon: Settings, label: 'Settings' },
             ].map((item, index) => (
-                <div key={index} className="flex flex-col items-center justify-center w-16 h-16 rounded-2xl text-emerald-700 hover:bg-emerald-50 transition-all duration-500 cursor-pointer transform hover:scale-110">
+                <div key={index} className="flex flex-col items-center justify-center w-16 h-16 rounded-2xl text-emerald-700 hover:bg-green-300 transition-all duration-500 cursor-pointer transform hover:scale-110">
                     <item.icon className="h-6 w-6 mb-1" />
                     <span className="text-xs">{item.label}</span>
                 </div>
