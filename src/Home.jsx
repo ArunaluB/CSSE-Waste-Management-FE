@@ -29,7 +29,7 @@ const Home = () => {
           </button>
           <button
             className="bg-green-700 text-white px-7 py-3 rounded-lg hover:bg-green-800 transition duration-300"
-            onClick={() => navigate('/bins')} // Navigate to the '/bins' route
+            onClick={() => navigate('/dashboard')} // Navigate to the '/bins' route
           >
             Smart Bins
           </button>

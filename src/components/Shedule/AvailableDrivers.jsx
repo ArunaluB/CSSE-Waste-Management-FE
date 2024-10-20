@@ -12,61 +12,56 @@ import Button from '@mui/material/Button';
 
 // Styled components for the table cells
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
+    [`&.${tableCellClasses.head}`]: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+    },
 }));
 
 // Styled component for table rows
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // Hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
+    '&:nth-of-type(odd)': {
+        backgroundColor: theme.palette.action.hover,
+    },
+    // Hide last border
+    '&:last-child td, &:last-child th': {
+        border: 0,
+    },
 }));
 
 const AvailableDrivers = () => {
     const navigate = useNavigate();
 
+    // State to store the list of drivers
     const [drivers, setDrivers] = useState([
-        {
-            driverId: 'D001',
-            name: 'John Doe',
-            status: 'Available',
-        },
-        {
-            driverId: 'D002',
-            name: 'Jane Smith',
-            status: 'Available',
-        },
-        {
-            driverId: 'D003',
-            name: 'Bob Johnson',
-            status: 'Unavailable',
-        },
+        { driverId: 'D001', name: 'John Doe', status: 'Available' },
+        { driverId: 'D002', name: 'Jane Smith', status: 'Available' },
+        { driverId: 'D003', name: 'Bob Johnson', status: 'Unavailable' },
+        { driverId: 'D004', name: 'Alice Brown', status: 'Available' },
+        { driverId: 'D005', name: 'Michael Davis', status: 'Available' },
+        { driverId: 'D006', name: 'Emily Wilson', status: 'Unavailable' },
     ]);
 
-    // Placeholder for future data fetching from backend using Spring Boot
+    // Fetch available drivers from the backend (placeholder for future implementation)
     useEffect(() => {
-        // Future implementation: Fetch data from the backend
+        // Uncomment and implement data fetching when backend is ready
         /*
         fetch('http://your-backend-api/availableDrivers')
-          .then(response => response.json())
-          .then(data => setDrivers(data))
-          .catch(error => console.error('Error fetching drivers data:', error));
+            .then(response => response.json())
+            .then(data => setDrivers(data))
+            .catch(error => console.error('Error fetching drivers data:', error));
         */
     }, []);
 
     return (
         <div className="flex min-h-screen">
-            <div className="ml-20 mt-24 p-10 flex-1 bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: "url('../assets/backB.png')" }}>
+            <div
+                className="ml-20 mt-24 p-10 flex-1 bg-cover bg-center bg-no-repeat bg-fixed"
+                style={{ backgroundImage: "url('../assets/backB.png')" }}
+            >
                 <h1 className='text-3xl mb-6 text-[#EFFFCB] font-bold text-center'>Available Drivers</h1>
 
                 {/* Table Container */}
@@ -91,9 +86,13 @@ const AvailableDrivers = () => {
                     </Table>
                 </TableContainer>
 
-                {/* Optional buttons for future actions */}
+                {/* Button to navigate to the Add Schedule page */}
                 <div className="mt-10 flex justify-center">
-                    <Button variant="contained" color="success" onClick={() => navigate('/addSchedule')}>
+                    <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => navigate('/addSchedule')}
+                    >
                         Add Schedule with Available Driver
                     </Button>
                 </div>

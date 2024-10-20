@@ -33,8 +33,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const ViewFullBins = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook for programmatic navigation
 
+  // State to hold the list of full bins
   const [fullBins, setFullBins] = useState([
     {
       binId: 'SB001',
@@ -49,38 +50,59 @@ const ViewFullBins = () => {
       lastCollected: '2024-10-09 09:45 am',
     },
     {
-        binId: 'SB002',
-        location: 'Kaduwela',
-        status: 'Full',
-        lastCollected: '2024-10-09 09:45 am',
-      },
-      {
-        binId: 'SB002',
-        location: 'Kaduwela',
-        status: 'Full',
-        lastCollected: '2024-10-09 09:45 am',
-      },
-      {
-        binId: 'SB002',
-        location: 'Kaduwela',
-        status: 'Full',
-        lastCollected: '2024-10-09 09:45 am',
-      },
-      {
-        binId: 'SB002',
-        location: 'Kaduwela',
-        status: 'Full',
-        lastCollected: '2024-10-09 09:45 am',
-      },
-      {
-        binId: 'SB002',
-        location: 'Kaduwela',
-        status: 'Full',
-        lastCollected: '2024-10-09 09:45 am',
-      },
+      binId: 'SB003',
+      location: 'Nugegoda',
+      status: 'Full',
+      lastCollected: '2024-10-08 11:15 am',
+    },
+    {
+      binId: 'SB004',
+      location: 'Colombo 7',
+      status: 'Full',
+      lastCollected: '2024-10-11 08:00 am',
+    },
+    {
+      binId: 'SB005',
+      location: 'Dehiwala',
+      status: 'Full',
+      lastCollected: '2024-10-09 07:30 am',
+    },
+    {
+      binId: 'SB006',
+      location: 'Moratuwa',
+      status: 'Full',
+      lastCollected: '2024-10-10 09:00 am',
+    },
+    {
+      binId: 'SB007',
+      location: 'Pettah',
+      status: 'Full',
+      lastCollected: '2024-10-11 12:45 pm',
+    },
+    {
+      binId: 'SB008',
+      location: 'Kollupitiya',
+      status: 'Full',
+      lastCollected: '2024-10-09 03:30 pm',
+    },
+    {
+      binId: 'SB009',
+      location: 'Battaramulla',
+      status: 'Full',
+      lastCollected: '2024-10-08 06:15 am',
+    },
+    {
+      binId: 'SB010',
+      location: 'Kelaniya',
+      status: 'Full',
+      lastCollected: '2024-10-10 02:00 pm',
+    },
+    
+    // Placeholder for additional bins
+    // Duplicate entries can be replaced or adjusted based on actual data
   ]);
 
-  // Placeholder for future data fetching from backend using Spring Boot
+  // Placeholder for future data fetching from the backend using Spring Boot
   useEffect(() => {
     // Future implementation: Fetch data from the backend
     /*
@@ -89,14 +111,14 @@ const ViewFullBins = () => {
       .then(data => setFullBins(data))
       .catch(error => console.error('Error fetching full bins data:', error));
     */
-  }, []);
+  }, []); // Empty dependency array means this runs once after the component mounts
 
   return (
     <div className="flex min-h-screen">
       <div className="ml-20 mt-24 p-10 flex-1 bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: "url('../assets/backB.png')" }}>
         <h1 className='text-3xl mb-6 text-[#EFFFCB] font-bold text-center'>Full Bins</h1>
 
-        {/* Table Container */}
+        {/* Table Container for displaying full bins */}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -120,10 +142,10 @@ const ViewFullBins = () => {
           </Table>
         </TableContainer>
 
-        {/* Optional buttons for future actions */}
+        {/* Button for adding a schedule for bin collection */}
         <div className="mt-10 flex justify-center">
           <Button variant="contained" color="success" onClick={() => navigate('/addSchedule')}>
-            Add Shedule for collect this Bins
+            Add Schedule for Collecting this Bins
           </Button>
         </div>
       </div>

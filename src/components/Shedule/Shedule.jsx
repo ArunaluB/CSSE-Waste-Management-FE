@@ -36,7 +36,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 const Schedule = () => {
   const navigate = useNavigate();
   
-  // State to hold schedule data, loading, and error state
+  // State to hold schedule data, loading state, and error state
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -57,22 +57,17 @@ const Schedule = () => {
     fetchSchedules();
   }, []);
 
-  const handleAddSchedule = () => {
-    navigate('/addSchedule');
-  };
+  // Navigation handlers
+  const handleAddSchedule = () => navigate('/addSchedule');
+  const handleViewFullBins = () => navigate('/viewFullBins');
+  const handleAvailabilityDrivers = () => navigate('/availableDrivers');
 
-  const handleViewFullBins = () => {
-    navigate('/viewFullBins');
-  };
-
-  const handleAvailabilityDrivers = () => {
-    navigate('/availableDrivers');
-  };
-
+  // Navigate to the edit schedule page
   const handleEditSchedule = (scheduleId) => {
     navigate(`/updateSchedule/${scheduleId}`);
   };
 
+  // Handle schedule deletion
   const handleDeleteSchedule = async (scheduleId) => {
     if (window.confirm('Are you sure you want to delete this schedule?')) {
       try {
@@ -88,20 +83,15 @@ const Schedule = () => {
   };
 
   // Render loading and error states
-  if (loading) {
-    return <div>Loading schedules...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading schedules...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="flex min-h-screen">
       <div className="ml-20 mt-20 p-10 flex-1 bg-cover bg-center bg-no-repeat bg-fixed" style={{ backgroundImage: "url('../assets/backB.png')" }}>
         <h1 className='text-3xl mb-6 text-[#EFFFCB] font-bold text-center'>All Schedules</h1>
 
-        {/* Table Container */}
+        {/* Table Container for displaying schedules */}
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -149,7 +139,7 @@ const Schedule = () => {
           </Table>
         </TableContainer>
 
-        {/* Buttons */}
+        {/* Buttons for additional actions */}
         <div className="mt-10 flex justify-center gap-8">
           <Button variant="contained" color="success" onClick={handleAddSchedule}>
             Add Schedule

@@ -18,28 +18,37 @@ import {
 import axios from 'axios';
 
 const AddSchedule = () => {
+    // Default smart bins and available drivers
     const defaultBins = [
-        { id: 'SB001', status: 'Full' },
-        { id: 'SB002', status: 'Available' },
-        { id: 'SB003', status: 'Full' },
-        { id: 'SB004', status: 'Available' },
-        { id: 'SB005', status: 'Full' },
-        { id: 'SB006', status: 'Available' },
+        { id: 'SB001', status: 'Full', Proccess: 'not' },
+        { id: 'SB002', status: 'Available', Proccess: 'not' },
+        { id: 'SB003', status: 'Full', Proccess: 'not' },
+        { id: 'SB004', status: 'Available', Proccess: 'not' },
+        { id: 'SB005', status: 'Full', Proccess: 'not' },
+        { id: 'SB006', status: 'Available', Proccess: 'not' },
     ];
 
     const availableDrivers = [
         { id: 'D001', name: 'John Doe', available: true },
         { id: 'D002', name: 'Jane Smith', available: true },
-        { id: 'D003', name: 'Mike Johnson', available: false },
+        { id: 'D003', name: 'Mike Johnson', available: true },
         { id: 'D004', name: 'Emily Davis', available: true },
+        { id: 'D005', name: 'Sarah Brown', available: true },
+        { id: 'D006', name: 'David Wilson', available: true },
+        { id: 'D007', name: 'Laura Miller', available: true },
+        { id: 'D008', name: 'James Taylor', available: true },
+        { id: 'D009', name: 'Linda Anderson', available: true },
+        { id: 'D010', name: 'Robert Martinez', available: true },
     ];
 
+    // State variables to manage form inputs
     const [scheduleId, setScheduleId] = useState('');
     const [selectedBins, setSelectedBins] = useState([]);
     const [driverId, setDriverId] = useState('');
     const [time, setTime] = useState('');
     const [route, setRoute] = useState('');
 
+    // Handles form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
         const newSchedule = {
@@ -55,25 +64,31 @@ const AddSchedule = () => {
             const response = await axios.post('http://localhost:8080/api/waste/schedule/add', newSchedule);
             console.log('Response:', response.data);
             alert('Schedule added successfully!');
-            
-            // Reset the form fields
-            setScheduleId('');
-            setSelectedBins([]);
-            setDriverId('');
-            setTime('');
-            setRoute('');
+
+            // Reset form fields
+            resetFormFields();
         } catch (error) {
             console.error('Error adding schedule:', error);
             alert('Failed to add schedule. Please try again.');
         }
     };
 
+    // Resets form fields to their default values
+    const resetFormFields = () => {
+        setScheduleId('');
+        setSelectedBins([]);
+        setDriverId('');
+        setTime('');
+        setRoute('');
+    };
+
+    // Handles changes in the checkbox selection for smart bins
     const handleBinChange = (e) => {
         const { value, checked } = e.target;
         if (checked) {
-            setSelectedBins([...selectedBins, value]);
+            setSelectedBins([...selectedBins, value]); // Add bin if checked
         } else {
-            setSelectedBins(selectedBins.filter((bin) => bin !== value));
+            setSelectedBins(selectedBins.filter((bin) => bin !== value)); // Remove bin if unchecked
         }
     };
 
@@ -86,6 +101,7 @@ const AddSchedule = () => {
                     </Typography>
                     <form onSubmit={handleSubmit}>
                         <Grid container spacing={3}>
+                            {/* Schedule ID input */}
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
@@ -98,25 +114,29 @@ const AddSchedule = () => {
                                 />
                             </Grid>
 
+                            {/* Smart Bins selection */}
                             <Grid item xs={12}>
                                 <Typography variant="h6">Smart Bins</Typography>
                                 <FormGroup row>
-                                    {defaultBins.filter(bin => bin.status === 'Full').map((bin) => (
-                                        <FormControlLabel
-                                            key={bin.id}
-                                            control={
-                                                <Checkbox
-                                                    checked={selectedBins.includes(bin.id)}
-                                                    onChange={handleBinChange}
-                                                    value={bin.id}
-                                                />
-                                            }
-                                            label={bin.id}
-                                        />
-                                    ))}
+                                    {defaultBins
+                                        .filter(bin => bin.status === 'Full' && bin.Proccess === 'not')
+                                        .map((bin) => (
+                                            <FormControlLabel
+                                                key={bin.id}
+                                                control={
+                                                    <Checkbox
+                                                        checked={selectedBins.includes(bin.id)}
+                                                        onChange={handleBinChange}
+                                                        value={bin.id}
+                                                    />
+                                                }
+                                                label={bin.id}
+                                            />
+                                        ))}
                                 </FormGroup>
                             </Grid>
 
+                            {/* Driver ID selection */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth>
                                     <InputLabel id="driver-select-label">Driver ID</InputLabel>
@@ -142,6 +162,7 @@ const AddSchedule = () => {
                                 </FormControl>
                             </Grid>
 
+                            {/* Time input */}
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
@@ -156,6 +177,7 @@ const AddSchedule = () => {
                                 />
                             </Grid>
 
+                            {/* Route input */}
                             <Grid item xs={12}>
                                 <TextField
                                     fullWidth
@@ -168,6 +190,7 @@ const AddSchedule = () => {
                                 />
                             </Grid>
 
+                            {/* Submit button */}
                             <Grid item xs={12}>
                                 <Box display="flex" justifyContent="center">
                                     <Button

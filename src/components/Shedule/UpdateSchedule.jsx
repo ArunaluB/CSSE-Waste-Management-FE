@@ -13,8 +13,9 @@ import axios from 'axios';
 
 const UpdateSchedule = () => {
   const { scheduleId } = useParams(); // Get scheduleId from URL parameters
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
+  // State to hold schedule details
   const [schedule, setSchedule] = useState({
     scheduleId: '',
     smartBins: [],
@@ -23,43 +24,44 @@ const UpdateSchedule = () => {
     route: '',
   });
 
+  // State for loading and error handling
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch schedule details using the scheduleId
+  // Fetch schedule details using the scheduleId when component mounts
   useEffect(() => {
     const fetchSchedule = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/api/waste/schedule/getSchedule?scheduleId=${scheduleId}`);
-        setSchedule(response.data);
+        setSchedule(response.data); // Set the fetched schedule data
         setLoading(false);
       } catch (err) {
-        setError('Failed to fetch schedule details');
+        setError('Failed to fetch schedule details'); // Set error message
         setLoading(false);
       }
     };
 
     fetchSchedule();
-  }, [scheduleId]);
+  }, [scheduleId]); // Dependency array ensures this runs when scheduleId changes
 
   // Handle form submission for updating the schedule
   const handleUpdate = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     try {
-      await axios.put(`http://localhost:8080/api/waste/schedule/update/${scheduleId}`, schedule);
+      await axios.put(`http://localhost:8080/api/waste/schedule/update/${scheduleId}`, schedule); // Send updated schedule to API
       navigate('/schedule'); // Redirect back to the schedule list after updating
     } catch (err) {
-      setError('Failed to update schedule');
+      setError('Failed to update schedule'); // Set error message on failure
     }
   };
 
   // Render loading and error states
   if (loading) {
-    return <div>Loading schedule...</div>;
+    return <div>Loading schedule...</div>; // Loading state
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div>{error}</div>; // Error state
   }
 
   return (
@@ -88,7 +90,7 @@ const UpdateSchedule = () => {
                   label="Driver Id"
                   variant="outlined"
                   value={schedule.driverId}
-                  onChange={(e) => setSchedule({ ...schedule, driverId: e.target.value })}
+                  onChange={(e) => setSchedule({ ...schedule, driverId: e.target.value })} // Update driverId state
                   required
                   placeholder="e.g., D001"
                 />
@@ -99,10 +101,10 @@ const UpdateSchedule = () => {
                   label="Time"
                   type="time"
                   InputLabelProps={{
-                    shrink: true,
+                    shrink: true, // Shrink label for time input
                   }}
                   value={schedule.time}
-                  onChange={(e) => setSchedule({ ...schedule, time: e.target.value })}
+                  onChange={(e) => setSchedule({ ...schedule, time: e.target.value })} // Update time state
                   required
                 />
               </Grid>
@@ -112,7 +114,7 @@ const UpdateSchedule = () => {
                   label="Route"
                   variant="outlined"
                   value={schedule.route}
-                  onChange={(e) => setSchedule({ ...schedule, route: e.target.value })}
+                  onChange={(e) => setSchedule({ ...schedule, route: e.target.value })} // Update route state
                   required
                   placeholder="e.g., City Center"
                 />
