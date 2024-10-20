@@ -1,7 +1,9 @@
+/* eslint-disable no-undef */
 
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   Trash2, User, Archive, CreditCard, Award, CheckCircle, Eye,
 } from 'lucide-react';
@@ -12,6 +14,7 @@ import BinRegistrationModal from '../Modal/BinRegistrationModal';
 import CompletionMessage from '../Modal/CompletionMessage';
 import BinDetailsModal from '../Modal/BinDetailsModal';
 import WasteAnalysisReportModal from '../Modal/WasteAnalysisReportModal';
+
 
 
 const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, isDarkMode }) => (
@@ -48,6 +51,8 @@ const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, 
 );
 
 const DashboardPage = ({ isDarkMode }) => {
+  const { userId } = useParams();
+  console.log(userId);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPaymentHistoryModal, setShowPaymentHistoryModal] = useState(false);
   const [showBinRegistrationModal, setShowBinRegistrationModal] = useState(false);
@@ -56,6 +61,123 @@ const DashboardPage = ({ isDarkMode }) => {
   const [showBinDetails, setShowBinDetails] = useState(false);
   const [showWasteAnalysisReportModal, setShowWasteAnalysisReportModal] = useState(false);
 
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState({
+    nextPaymentDate: true,
+    activeStatus: true,
+    recyclingActivity: true,
+    binStatus: true
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setErrors({});
+      setIsLoading({
+        nextPaymentDate: true,
+        activeStatus: true,
+        recyclingActivity: true,
+        binStatus: true
+      });
+
+      try {
+        // Fetch next payment date
+        const paymentResponse = await fetch(`http://localhost:8080/api/waste/Payment/nextPayment?userid=${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!paymentResponse.ok) {
+          throw new Error(`Next Payment Date: HTTP error! status: ${paymentResponse.status}`);
+        }
+        const paymentData = await paymentResponse.text();
+        if (paymentData && !isNaN(new Date(paymentData).getTime())) {
+          setNextPaymentDate(new Date(paymentData).toLocaleDateString());
+        } else {
+          setNextPaymentDate('N/A');
+        }
+      } catch (error) {
+        console.error('Error fetching next payment date:', error);
+        setErrors(prevErrors => ({ ...prevErrors, nextPaymentDate: error.message }));
+        setNextPaymentDate('Error');
+      } finally {
+        setIsLoading(prev => ({ ...prev, nextPaymentDate: false }));
+      }
+
+      try {
+        // Fetch active status
+        const statusResponse = await fetch(`http://localhost:8080/api/waste/users/status?userId=${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!statusResponse.ok) {
+          throw new Error(`Active Status: HTTP error! status: ${statusResponse.status}`);
+        }
+        const statusData = await statusResponse.text();
+        setActiveStatus(statusData || 'N/A');
+      } catch (error) {
+        console.error('Error fetching active status:', error);
+        setErrors(prevErrors => ({ ...prevErrors, activeStatus: error.message }));
+        setActiveStatus('Error');
+      } finally {
+        setIsLoading(prev => ({ ...prev, activeStatus: false }));
+      }
+
+      try {
+        // Fetch recycling activity
+        const activityResponse = await fetch(`http://localhost:8080/api/waste/collector/getcollecterdetails?userid=${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!activityResponse.ok) {
+          throw new Error(`Recycling Activity: HTTP error! status: ${activityResponse.status}`);
+        }
+        const activityData = await activityResponse.json();
+        setRecyclingActivity(activityData || []);
+      } catch (error) {
+        console.error('Error fetching recycling activity:', error);
+        setErrors(prevErrors => ({ ...prevErrors, recyclingActivity: error.message }));
+        setRecyclingActivity([]);
+      } finally {
+        setIsLoading(prev => ({ ...prev, recyclingActivity: false }));
+      }
+
+      try {
+        // Check if user has a bin
+        const binResponse = await fetch(`http://localhost:8080/api/waste/bins/check?userId=${userId}`, {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        });
+        if (!binResponse.ok) {
+          throw new Error(`Bin Status: HTTP error! status: ${binResponse.status}`);
+        }
+        const binData = await binResponse.json();
+        setHasBin(binData.hasBin);
+      } catch (error) {
+        console.error('Error fetching bin status:', error);
+        setErrors(prevErrors => ({ ...prevErrors, binStatus: error.message }));
+        setHasBin(false);
+      } finally {
+        setIsLoading(prev => ({ ...prev, binStatus: false }));
+      }
+    };
+
+    fetchData();
+  }, [userId]);
 
   return (
     <div className="pt-28 pb-20 px-20">
@@ -163,7 +285,15 @@ const DashboardPage = ({ isDarkMode }) => {
         />
       )}
       {showCompletionMessage && <CompletionMessage showCompletionMessage={showCompletionMessage} setShowCompletionMessage={setShowCompletionMessage} />}
-      {showBinDetails && <BinDetailsModal showBinDetails={showBinDetails} setShowBinDetails={setShowBinDetails} />}
+      {showBinDetails && (
+        <BinDetailsModal
+          userId={userId}
+          showBinDetails={showBinDetails}
+          setShowBinDetails={setShowBinDetails}
+        />
+      )}
+
+
       {showWasteAnalysisReportModal && (
         <WasteAnalysisReportModal
           showWasteAnalysisReport={showWasteAnalysisReportModal}
