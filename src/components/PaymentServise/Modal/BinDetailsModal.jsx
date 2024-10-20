@@ -22,7 +22,7 @@ const BinDetailsModal = ({ showBinDetails, setShowBinDetails}) => {
       console.log("userId modal:", userId);
       setLoading(true);
 
-      fetch(`http://localhost:8080/api/waste/Bin/getbindetails?userid=${userId}`, {
+      fetch(`http://localhost:8080/api/waste/Bin/getbindetails?userid=USER1`, {
         method: 'GET',
         credentials: 'include',
         headers: {

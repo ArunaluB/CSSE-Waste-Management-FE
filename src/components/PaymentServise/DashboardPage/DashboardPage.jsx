@@ -52,6 +52,7 @@ const StatCard = ({ title, value, icon: Icon, trend, onClick, hasBin, children, 
 
 const DashboardPage = ({ isDarkMode }) => {
   const { userId } = useParams();
+  userId = USER1;
   console.log(userId);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [showPaymentHistoryModal, setShowPaymentHistoryModal] = useState(false);
