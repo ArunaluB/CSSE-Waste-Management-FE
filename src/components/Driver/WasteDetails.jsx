@@ -12,7 +12,7 @@ const WasteDetails = () => {
     const fetchWasteDetails = async () => {
       try {
         const response = await axios.get(`http://localhost:8080/waste/getWasteDetails?scheduleId=${scheduleId}`);
-        setWasteDetails(response.data); // Assuming the API returns an array of waste details
+        setWasteDetails(response.data);
       } catch (error) {
         setError('Error fetching waste details');
       } finally {
@@ -23,20 +23,15 @@ const WasteDetails = () => {
     fetchWasteDetails();
   }, [scheduleId]);
 
-  if (loading) {
-    return <div>Loading waste details...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
+  if (loading) return <div>Loading waste details...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div>
+    <div className="waste-details">
       <h2>Waste Collection Details</h2>
       {wasteDetails.length > 0 ? (
         wasteDetails.map((detail, index) => (
-          <div key={index} style={{ marginBottom: '20px' }}>
+          <div key={index}>
             <h4>Collector ID: {detail.collectorId}</h4>
             <p>Bin ID: {detail.binId}</p>
             <input
