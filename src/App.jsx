@@ -5,6 +5,9 @@ import Navbar from './components/comman/Navbar/Navbar';
 import Sidebar from './components/comman/Sidebar/Sidebar';
 import PaymentDashboardPage from './components/PaymentServise/DashboardPage/DashboardPage';
 import './App.css';
+import DriverList from './components/Driver/DriverList';
+import ScheduleDetails from './components/Driver/ScheduleDetails';
+import WasteDetails from './components/Driver/WasteDetails';
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -14,8 +17,20 @@ function App() {
       path: "/",
       element: <PaymentDashboardPage isDarkMode={isDarkMode} />,
     },
+    {
+      path: "/d",
+      element: <DriverList isDarkMode={isDarkMode} />,
+    },
+    {
+      path: "/schedule/:driverId",
+      element: <ScheduleDetails isDarkMode={isDarkMode} />,
+    },
+    {
+      path: "/waste-details",
+      element: <WasteDetails isDarkMode={isDarkMode} />,
+    },
   ]);
-
+ 
   return (
     <div className={`flex flex-col h-screen ${isDarkMode ? 'dark' : ''}`}>
       <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
